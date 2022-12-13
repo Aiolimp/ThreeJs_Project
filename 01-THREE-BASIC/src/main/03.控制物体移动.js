@@ -44,6 +44,8 @@ document.body.appendChild(renderer.domElement)
 
 // 5.使用轨道控制器查看物体
 const controls = new OrbitControls(camera, renderer.domElement)
+// 设置控制器阻尼，让控制器更有真实效果,必须在动画循环里调用.update()
+controls.enableDamping = true;
 
 // 6.添加坐标轴辅助器(AxesHelper)：参数代表轴的线段长度. 默认为 1.
 const axesHelper = new THREE.AxesHelper(5)
@@ -52,6 +54,7 @@ scent.add(axesHelper)
 
 
 function render() {
+    controls.update();
     cube.position.x += 0.01;
     if (cube.position.x > 5) {
         cube.position.x = 0
