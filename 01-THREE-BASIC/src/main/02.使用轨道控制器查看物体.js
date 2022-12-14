@@ -7,7 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // 目标：使用轨道控制器查看物体
 
 // 1.创建场景
-const scent = new THREE.Scene();
+const scene = new THREE.Scene();
 
 // 2.创建相机：透视相机（PerspectiveCamera）
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
@@ -15,7 +15,7 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 //   2.1设置相机位置
 camera.position.set(0, 0, 10);
 //   2.2将相机添加到场景中
-scent.add(camera)
+scene.add(camera)
 
 // 3.添加物体
 //   3.1添加几何体和材质：立方缓冲几何体（BoxGeometry）、基础网格材质(MeshBasicMaterial)
@@ -24,7 +24,7 @@ const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 })
 //   3.2根据几何体和材质创建物体：网格（Mesh）
 const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
 //   3.3将几何体添加到场景中
-scent.add(cube)
+scene.add(cube)
 
 // 4.初始化渲染器
 const renderer = new THREE.WebGLRenderer();
@@ -35,7 +35,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement)
 
 // //  4.3使用渲染器，将场景通过相机渲染进来
-// // renderer.render(scent, camera)
+// // renderer.render(scene, camera)
 
 // 5.使用轨道控制器查看物体
 const controls = new OrbitControls(camera, renderer.domElement)
@@ -45,12 +45,12 @@ controls.enableDamping = true;
 // 6.添加坐标轴辅助器(AxesHelper)：参数代表轴的线段长度. 默认为 1.
 const axesHelper = new THREE.AxesHelper(5)
 //   将坐标轴辅助器体添加到场景中
-scent.add(axesHelper)
+scene.add(axesHelper)
 
 
 function render() {
     controls.update();
-    renderer.render(scent, camera)
+    renderer.render(scene, camera)
     // 渲染下一帧的时候就会调用render函数
     requestAnimationFrame(render)
 }

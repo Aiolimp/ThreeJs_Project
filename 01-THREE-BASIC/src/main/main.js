@@ -12,7 +12,7 @@ import * as dat from 'dat.gui'
 /*
 * 1.创建场景
 */
-const scent = new THREE.Scene();
+const scene = new THREE.Scene();
 
 /*
 * 2.创建相机：透视相机（PerspectiveCamera）
@@ -23,7 +23,7 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 camera.position.set(0, 0, 10);
 
 // 2.2将相机添加到场景中
-scent.add(camera)
+scene.add(camera)
 
 /*
 * 3.添加物体
@@ -47,7 +47,7 @@ const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
 cube.rotation.set(Math.PI / 4, 0, 0)
 
 // 3.7将几何体添加到场景中
-scent.add(cube)
+scene.add(cube)
 
 
 /*
@@ -64,7 +64,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement)
 
 // 4.3使用渲染器，将场景通过相机渲染进来
-// renderer.render(scent, camera)
+// renderer.render(scene, camera)
 
 /*
 * 5.使用轨道控制器查看物体
@@ -79,7 +79,7 @@ controls.enableDamping = true;
 
 const axesHelper = new THREE.AxesHelper(5)
 // 将坐标轴辅助器体添加到场景中
-scent.add(axesHelper)
+scene.add(axesHelper)
 
 // 设置时钟
 const clock = new THREE.Clock()
@@ -162,7 +162,7 @@ window.addEventListener("dblclick", () => {
 })
 
 function render() {
-    renderer.render(scent, camera)
+    renderer.render(scene, camera)
     // 渲染下一帧的时候就会调用render函数
     requestAnimationFrame(render)
 }

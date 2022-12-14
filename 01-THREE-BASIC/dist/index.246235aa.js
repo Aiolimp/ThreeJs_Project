@@ -544,14 +544,14 @@ var _datGui = require("dat.gui");
 // 目标：应用图形用户界面更改变量
 /*
 * 1.创建场景
-*/ const scent = new _three.Scene();
+*/ const scene = new _three.Scene();
 /*
 * 2.创建相机：透视相机（PerspectiveCamera）
 */ const camera = new _three.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 // 2.1设置相机位置
 camera.position.set(0, 0, 10);
 // 2.2将相机添加到场景中
-scent.add(camera);
+scene.add(camera);
 /*
 * 3.添加物体
 */ // 3.1添加几何体和材质：立方缓冲几何体（BoxGeometry）、基础网格材质(MeshBasicMaterial)
@@ -570,7 +570,7 @@ const cube = new _three.Mesh(cubeGeometry, cubeMaterial);
 // 3.6设置物体的旋转:rotation (Math.PI/4 = 45°)
 cube.rotation.set(Math.PI / 4, 0, 0);
 // 3.7将几何体添加到场景中
-scent.add(cube);
+scene.add(cube);
 /*
 * 4.初始化渲染器
 */ const renderer = new _three.WebGLRenderer();
@@ -580,7 +580,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // 4.2将webgl渲染的canvas内容添加到body
 document.body.appendChild(renderer.domElement);
 // 4.3使用渲染器，将场景通过相机渲染进来
-// renderer.render(scent, camera)
+// renderer.render(scene, camera)
 /*
 * 5.使用轨道控制器查看物体
 */ const controls = new (0, _orbitControls.OrbitControls)(camera, renderer.domElement);
@@ -590,7 +590,7 @@ controls.enableDamping = true;
 * 6.添加坐标轴辅助器(AxesHelper)：参数代表轴的线段长度. 默认为 1.
 */ const axesHelper = new _three.AxesHelper(5);
 // 将坐标轴辅助器体添加到场景中
-scent.add(axesHelper);
+scene.add(axesHelper);
 // 设置时钟
 const clock = new _three.Clock();
 // 应用图形用户界面更改变量
@@ -664,7 +664,7 @@ window.addEventListener("dblclick", ()=>{
     document.exitFullscreen();
 });
 function render() {
-    renderer.render(scent, camera);
+    renderer.render(scene, camera);
     // 渲染下一帧的时候就会调用render函数
     requestAnimationFrame(render);
 }
