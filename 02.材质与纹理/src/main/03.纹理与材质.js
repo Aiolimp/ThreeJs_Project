@@ -4,7 +4,7 @@ import { Mesh } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 //导入动画库
 
-// 目标：AO环境遮挡贴图
+// 目标：材质与纹理
 
 /*
 * 1.创建场景
@@ -27,8 +27,32 @@ scene.add(camera)
 // 设置纹理
 const textureLoader = new THREE.TextureLoader(); // 纹理加载器
 const doorColorTexture = textureLoader.load('./textures/door/color.jpg') // 导入纹理
+const texture = textureLoader.load('./textures/minecraft.png') // 导入纹理
 const doorAplhaTexture = textureLoader.load('./textures/door/alpha.jpg') // 导入透明纹理
-const doorAoTexture = textureLoader.load('./textures/door/ambientOcclusion.jpg') // 导入AO环境遮挡贴图
+
+// // 纹理偏移：offset
+// doorColorTexture.offset.x = 0.5;
+// doorColorTexture.offset.y = 0.5;
+// doorColorTexture.offset.set(0.5, 0.5);
+
+// // 设置旋转原点
+// doorColorTexture.center.set(0.5, 0.5)
+
+// // 纹理旋转: rotation
+// doorColorTexture.rotation = Math.PI / 4; // 旋转45°
+
+// // 设置纹理重复
+// doorColorTexture.repeat.set(2, 3);
+
+// // 设置纹理重复的模式
+// doorColorTexture.wrapS = THREE.RepeatWrapping; // 水平重复
+// doorColorTexture.wrapT = THREE.MirroredRepeatWrapping; // 镜像重复
+
+// 纹理显示设置
+// texture.minFilter = THREE.NearestFilter;
+// texture.magFilter = THREE.NearestFilter;
+
+
 
 /*
 * 3.添加物体
@@ -41,27 +65,20 @@ const cubeMaterial = new THREE.MeshBasicMaterial({
     map: doorColorTexture, // 颜色贴图
     alphaMap: doorAplhaTexture, // 透明纹理
     transparent: true, // 是否透明
-    aoMap: doorAoTexture,// AO环境遮挡贴图
+    // map: texture // 颜色贴图
+    opacity: 0.3, // 透明度
+    side: THREE.DoubleSide // 设置物体可以两面查看，默认看不到后面
 })
 const cube = new Mesh(cubeGeometry, cubeMaterial)
 scene.add(cube)
 
 // 添加平面
-const planeGeometry = new THREE.PlaneGeometry(1, 1)
-const plane = new THREE.Mesh(planeGeometry,cubeMaterial)
+const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(1,1),
+    cubeMaterial
+)
 plane.position.x = 3
 scene.add(plane)
-// aoMap需要两个uv
-// 给平面设置第二组uv,直接将planeGeometry的第一个uv复制过来，
-planeGeometry.setAttribute(
-    "uv2",
-    new THREE.BufferAttribute(planeGeometry.attributes.uv.array,2)
-)
-// 给物体设置第二组uv,直接将planeGeometry的第一个uv复制过来，
-cubeGeometry.setAttribute(
-    "uv2",
-    new THREE.BufferAttribute(cubeGeometry.attributes.uv.array,2)
-)
 
 /*
 * 4.初始化渲染器

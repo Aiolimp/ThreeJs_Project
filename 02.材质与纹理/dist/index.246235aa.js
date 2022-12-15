@@ -536,7 +536,7 @@ var _three = require("three");
 // 导入轨道控制器
 var _orbitControls = require("three/examples/jsm/controls/OrbitControls");
 //导入动画库
-// 目标：材质与纹理
+// 目标：AO环境遮挡贴图
 /*
 * 1.创建场景
 */ const scene = new _three.Scene();
@@ -551,29 +551,33 @@ scene.add(camera);
 const textureLoader = new _three.TextureLoader(); // 纹理加载器
 const doorColorTexture = textureLoader.load("./textures/door/color.jpg") // 导入纹理
 ;
-// 纹理偏移：offset
-doorColorTexture.offset.x = 0.5;
-doorColorTexture.offset.y = 0.5;
-doorColorTexture.offset.set(0.5, 0.5);
-// 设置旋转原点
-doorColorTexture.center.set(0.5, 0.5);
-// 纹理旋转: rotation
-doorColorTexture.rotation = Math.PI / 4; // 旋转45°
-// 设置纹理重复
-doorColorTexture.repeat.set(2, 3);
-// 设置纹理重复的模式
-doorColorTexture.wrapS = _three.RepeatWrapping; // 水平重复
-doorColorTexture.wrapT = _three.MirroredRepeatWrapping; // 镜像重复
+const doorAplhaTexture = textureLoader.load("./textures/door/alpha.jpg") // 导入透明纹理
+;
+const doorAoTexture = textureLoader.load("./textures/door/ambientOcclusion.jpg") // 导入AO环境遮挡贴图
+;
 /*
 * 3.添加物体
 */ const cubeGeometry = new _three.BoxGeometry(1, 1, 1);
 // 材质
 const cubeMaterial = new _three.MeshBasicMaterial({
     color: "#ffff00",
-    map: doorColorTexture //颜色贴图
+    map: doorColorTexture,
+    alphaMap: doorAplhaTexture,
+    transparent: true,
+    aoMap: doorAoTexture
 });
 const cube = new (0, _three.Mesh)(cubeGeometry, cubeMaterial);
 scene.add(cube);
+// 添加平面
+const planeGeometry = new _three.PlaneGeometry(1, 1);
+const plane = new _three.Mesh(planeGeometry, cubeMaterial);
+plane.position.x = 3;
+scene.add(plane);
+// aoMap需要两个uv
+// 给平面设置第二组uv,直接将planeGeometry的第一个uv复制过来，
+planeGeometry.setAttribute("uv2", new _three.BufferAttribute(planeGeometry.attributes.uv.array, 2));
+// 给物体设置第二组uv,直接将planeGeometry的第一个uv复制过来，
+cubeGeometry.setAttribute("uv2", new _three.BufferAttribute(cubeGeometry.attributes.uv.array, 2));
 /*
 * 4.初始化渲染器
 */ const renderer = new _three.WebGLRenderer();
