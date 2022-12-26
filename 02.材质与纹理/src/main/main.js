@@ -1,10 +1,18 @@
 import * as THREE from 'three'
-import { Mesh } from 'three';
 // 导入轨道控制器
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-//导入动画库
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBEloader'
 
-// 目标：AO环境遮挡贴图
+// 目标：加载hdr图
+
+// 加载hdr环境图
+
+const rgbeLoader = new RGBELoader();
+rgbeLoader.loadAsync("textures/hdr/002.hdr").then((texture)=>{
+    texture.mapping = THREE.EquirectangularReflectionMapping; // 设置纹理映射
+    scene.background = texture;
+    scene.environment = texture;
+})
 
 /*
 * 1.创建场景
@@ -22,46 +30,42 @@ camera.position.set(0, 0, 10);
 // 2.2将相机添加到场景中
 scene.add(camera)
 
+// 设置cube纹理加载器
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+const envMapTexture = cubeTextureLoader.load([
+    "./textures/environmentMaps/1/px.jpg",
+    "./textures/environmentMaps/1/nx.jpg",
+    "./textures/environmentMaps/1/py.jpg",
+    "./textures/environmentMaps/1/ny.jpg",
+    "./textures/environmentMaps/1/pz.jpg",
+    "./textures/environmentMaps/1/nz.jpg",
+]);
+// 添加圆形物体
+const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
+const material = new THREE.MeshStandardMaterial({
+    metalness: 0.7, // 设置金属
+    roughness: 0.1, // 设置粗糙度
+    // envMap: envMapTexture // 环境贴图
+});
+const spher = new THREE.Mesh(sphereGeometry, material);
+scene.add(spher)
 
 
-// 设置纹理
-const textureLoader = new THREE.TextureLoader(); // 纹理加载器
-const doorColorTexture = textureLoader.load('./textures/door/color.jpg') // 导入纹理
-const doorAplhaTexture = textureLoader.load('./textures/door/alpha.jpg') // 导入透明纹理
-const doorAoTexture = textureLoader.load('./textures/door/ambientOcclusion.jpg') // 导入AO环境遮挡贴图
+// 灯光
+// 环境光：AmbientLight
+const light = new THREE.AmbientLight(0xffffff);
+scene.add(light)
 
-/*
-* 3.添加物体
-*/
-const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+// 场景添加背景
+scene.background = envMapTexture;
+// 给场景所有的物体添加默认的环境贴图
+scene.environment = envMapTexture;
 
-// 材质
-const cubeMaterial = new THREE.MeshBasicMaterial({
-    color: '#ffff00',
-    map: doorColorTexture, // 颜色贴图
-    alphaMap: doorAplhaTexture, // 透明纹理
-    transparent: true, // 是否透明
-    aoMap: doorAoTexture,// AO环境遮挡贴图
-})
-const cube = new Mesh(cubeGeometry, cubeMaterial)
-scene.add(cube)
+// 直线光：
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5)
+directionalLight.position.set(10, 10, 10)
+scene.add(directionalLight)
 
-// 添加平面
-const planeGeometry = new THREE.PlaneGeometry(1, 1)
-const plane = new THREE.Mesh(planeGeometry,cubeMaterial)
-plane.position.x = 3
-scene.add(plane)
-// aoMap需要两个uv
-// 给平面设置第二组uv,直接将planeGeometry的第一个uv复制过来
-planeGeometry.setAttribute(
-    "uv2",
-    new THREE.BufferAttribute(planeGeometry.attributes.uv.array,2)
-)
-// 给物体设置第二组uv,直接将planeGeometry的第一个uv复制过来，
-cubeGeometry.setAttribute(
-    "uv2",
-    new THREE.BufferAttribute(cubeGeometry.attributes.uv.array,2)
-)
 
 /*
 * 4.初始化渲染器
@@ -93,10 +97,6 @@ controls.enableDamping = true;
 const axesHelper = new THREE.AxesHelper(5)
 // 将坐标轴辅助器体添加到场景中
 scene.add(axesHelper)
-
-// 设置时钟
-const clock = new THREE.Clock()
-
 
 function render() {
     renderer.render(scene, camera)
