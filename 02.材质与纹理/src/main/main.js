@@ -52,7 +52,7 @@ const plane = new THREE.Mesh(planeGeometry,cubeMaterial)
 plane.position.x = 3
 scene.add(plane)
 // aoMap需要两个uv
-// 给平面设置第二组uv,直接将planeGeometry的第一个uv复制过来，
+// 给平面设置第二组uv,直接将planeGeometry的第一个uv复制过来
 planeGeometry.setAttribute(
     "uv2",
     new THREE.BufferAttribute(planeGeometry.attributes.uv.array,2)
